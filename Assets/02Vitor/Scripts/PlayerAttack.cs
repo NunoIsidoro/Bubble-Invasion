@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 using System.Collections;
+using MoreMountains.Feedbacks;
 
 public class PlayerAttack : MonoBehaviour
 {
@@ -20,6 +21,8 @@ public class PlayerAttack : MonoBehaviour
     public Animator animator;
 
     public Collider2D attackCollider; // Collider for the attack hitbox
+    
+    public AudioSource player_attack_feedback;
 
     void Start()
     {
@@ -72,6 +75,7 @@ public class PlayerAttack : MonoBehaviour
         attackVisualTimer = attackDuration;
 
         // Trigger the attack animation
+        player_attack_feedback.Play();
         animator.SetTrigger("Attack");
 
         // Enable the collider to start detecting hits

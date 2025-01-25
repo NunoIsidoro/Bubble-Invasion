@@ -1,3 +1,4 @@
+using MoreMountains.Feedbacks;
 using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
@@ -11,31 +12,51 @@ public class PlayerMovement : MonoBehaviour
     public Animator animator;
 
     public bool isJumping;
-
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-   
-    }
+    public bool isFalling;
+    
+    public MMF_Player player_walk_feedback;
 
     // Update is called once per frame
     void Update()
     {
+        // Movimentação horizontal
         Move = Input.GetAxis("Horizontal");
-        
         rb.linearVelocity = new Vector2(speed * Move, rb.linearVelocity.y);
 
+        // Atualiza o parâmetro do Animator para indicar se está correndo
+        bool isRunning = Mathf.Abs(Move) > 0.1f;
+        animator.SetBool("IsRunning", isRunning);
 
-        // Update animator parameter to indicate running status
-        animator.SetBool("IsRunning", Mathf.Abs(Move) > 0.1f);
+        // Toca ou para o feedback do som de passos
+        if (isRunning && !isJumping && !player_walk_feedback.IsPlaying)
+        {
+            player_walk_feedback.PlayFeedbacks();
+        }
+        else if (!isRunning || isJumping)
+        {
+            player_walk_feedback.StopFeedbacks();
+        }
 
-        // Jumping
+        // Detecta e executa o salto
         if (Input.GetButtonDown("Jump") && !isJumping)
         {
             rb.AddForce(Vector2.up * jump, ForceMode2D.Impulse);
             isJumping = true;
-            // Set the IsJumping parameter (if you have one for jump animation)
+            isFalling = false;
+
+            // Ativa a animação de salto
             animator.SetBool("IsJumping", true);
+            animator.SetBool("IsFalling", false);
+
+            // Para o som de passos durante o salto
+            player_walk_feedback.StopFeedbacks();
+        }
+
+        // Detecta se o jogador está caindo
+        if (rb.linearVelocity.y < 0 && isJumping)
+        {
+            isFalling = true;
+            animator.SetBool("IsFalling", true);
         }
 
         FlipX(Move);
@@ -46,6 +67,11 @@ public class PlayerMovement : MonoBehaviour
         if (other.gameObject.CompareTag("Ground"))
         {
             isJumping = false;
+            isFalling = false;
+
+            // Reseta os parâmetros de salto e queda no Animator
+            animator.SetBool("IsJumping", false);
+            animator.SetBool("IsFalling", false);
         }
     }
 
@@ -54,6 +80,9 @@ public class PlayerMovement : MonoBehaviour
         if (other.gameObject.CompareTag("Ground"))
         {
             isJumping = true;
+
+            // Para o som de passos ao sair do chão
+            player_walk_feedback.StopFeedbacks();
         }
     }
 

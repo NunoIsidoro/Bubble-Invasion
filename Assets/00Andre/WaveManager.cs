@@ -83,6 +83,11 @@ public class WaveManager : MonoBehaviour
             }
 
             currentWave++;
+            
+            if (currentWave % 3 == 0)
+            {
+                EnemyRadioPrefabSpawner.instance.SpawnEnemyRadio();
+            }
         }
     }
     

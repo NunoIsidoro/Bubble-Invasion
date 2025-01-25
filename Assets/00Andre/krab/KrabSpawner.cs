@@ -14,7 +14,7 @@ public class KrabSpawner : MonoBehaviour
         for (int i = 0; i < maxSpawnableKrabs; i++)
         {
             // 50% de chance de spawnar cada Krab
-            if (Random.value <= 0.5f)
+            if (Random.value <= 0.65f)
             {
                 SpawnKrab();
             }
@@ -30,7 +30,7 @@ public class KrabSpawner : MonoBehaviour
         
         float screenHeight = Camera.main.orthographicSize * 2;
         // Faz o Krab aparecer aleatoriamente na parte inferior da tela
-        float randomY = -8.32f;
+        float randomY = -7.32f;
 
         // Decide se o Krab será spawnado à esquerda ou à direita
         float randomX = Random.value > 0.5f ? leftLimitX : rightLimitX;
