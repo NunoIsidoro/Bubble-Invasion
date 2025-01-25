@@ -1784,6 +1784,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5dac28b4a3b66f14ea674cb813e0ef88, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  PlayerStats: {fileID: 537816367}
   Game: {fileID: 389676054}
   GameInstances: {fileID: 1745435228}
   WaveManager: {fileID: 772784161}
@@ -2661,9 +2662,11 @@ MonoBehaviour:
   attackRange: 1
   attackDuration: 0.2
   attackCooldown: 0.4
+  knockbackForce: 30
   enemyLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 256
+  attackRadius: 1
 --- !u!114 &537816364
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2742,6 +2745,8 @@ MonoBehaviour:
   HeartContainer: {fileID: 1200494372}
   heartPrefab: {fileID: 8958293016824866028, guid: d5dc0eb4ca9783741acbe1aa014e10df, type: 3}
   hearts: []
+  timer: {fileID: 7848811726079119153}
+  isDefeatPopupActive: 0
 --- !u!1 &619394800
 GameObject:
   m_ObjectHideFlags: 0
@@ -3099,6 +3104,7 @@ GameObject:
   - component: {fileID: 682289652}
   - component: {fileID: 682289654}
   - component: {fileID: 682289653}
+  - component: {fileID: 682289655}
   m_Layer: 5
   m_Name: Text (TMP)
   m_TagString: Untagged
@@ -3226,6 +3232,21 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 682289651}
   m_CullTransparentMesh: 1
+--- !u!114 &682289655
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 682289651}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e923ebbc16197a44e9f693d61c460288, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  TimerName: <color=#B3B5C7><size=65%>Current Time</size></color>
+  Target: {fileID: 682289653}
+  timer: {fileID: 7848811726079119153}
 --- !u!1 &708009559
 GameObject:
   m_ObjectHideFlags: 0
@@ -3810,6 +3831,7 @@ MonoBehaviour:
   bigBubbleSpawner: {fileID: 1600748110}
   KrabSpawner: {fileID: 48794014}
   PlayerStats: {fileID: 537816367}
+  timer: {fileID: 7848811726079119153}
   initialTimeBetweenWaves: 0
   timeIncrement: 5
   maxTimeBetweenWaves: 45
@@ -4290,7 +4312,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0, y: 0.00979358}
+  m_Offset: {x: 0, y: -0.58322954}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -4300,7 +4322,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 1, y: 1.9728304}
+  m_Size: {x: 1, y: 0.7867842}
   m_EdgeRadius: 0
 --- !u!1 &954840196
 GameObject:
@@ -4454,7 +4476,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "Game made by: Andr\xE9 Cerqueira, Nuno Isidoro, Vitor Silva, Nuno Fernandes,
+  m_text: "Game made by: Andr\xE9 Cerqueira, Nuno Isidoro, Vitor Silva, Marco Cerqueira,
     Andr\xE9 Sampaio"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: e1980d03e94584c2b8bf7986c994fd3a, type: 2}
@@ -6313,7 +6335,7 @@ MonoBehaviour:
       m_Calls: []
   m_text: '<color=#B3B5C7><size=65%>Enemies Killed</size></color>
 
-    245'
+    0'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: ca247a3092b7b404dbaa6f4ab43e450c, type: 2}
   m_sharedMaterial: {fileID: -403277894513911722, guid: ca247a3092b7b404dbaa6f4ab43e450c, type: 2}
@@ -8192,9 +8214,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1741200676}
-        m_TargetAssemblyTypeName: Project.Runtime.Scripts.UI.Core.ScreenLoader, Assembly-CSharp
-        m_MethodName: OnButtonReturnFromPopup
+      - m_Target: {fileID: 335198361}
+        m_TargetAssemblyTypeName: GameManager, Assembly-CSharp
+        m_MethodName: TryAgain
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -8204,9 +8226,9 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 335198361}
-        m_TargetAssemblyTypeName: GameManager, Assembly-CSharp
-        m_MethodName: ResumeGame
+      - m_Target: {fileID: 1741200676}
+        m_TargetAssemblyTypeName: Project.Runtime.Scripts.UI.Core.ScreenLoader, Assembly-CSharp
+        m_MethodName: OnButtonReturnFromPopup
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -8388,7 +8410,7 @@ MonoBehaviour:
       m_Calls: []
   m_text: '<color=#B3B5C7><size=65%>Enemies Killed</size></color>
 
-    245'
+    0'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: ca247a3092b7b404dbaa6f4ab43e450c, type: 2}
   m_sharedMaterial: {fileID: -403277894513911722, guid: ca247a3092b7b404dbaa6f4ab43e450c, type: 2}
@@ -9588,6 +9610,7 @@ GameObject:
   - component: {fileID: 1473999030}
   - component: {fileID: 1473999032}
   - component: {fileID: 1473999031}
+  - component: {fileID: 1473999033}
   m_Layer: 5
   m_Name: Text (TMP)
   m_TagString: Untagged
@@ -9715,6 +9738,21 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1473999029}
   m_CullTransparentMesh: 1
+--- !u!114 &1473999033
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1473999029}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e923ebbc16197a44e9f693d61c460288, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  TimerName: <color=#B3B5C7><size=65%>Current Time</size></color>
+  Target: {fileID: 1473999031}
+  timer: {fileID: 7848811726079119153}
 --- !u!1 &1511581025
 GameObject:
   m_ObjectHideFlags: 0
@@ -10400,7 +10438,7 @@ Transform:
   m_GameObject: {fileID: 1600748108}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: -22, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -12926,6 +12964,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1986895437}
   - component: {fileID: 1986895438}
+  - component: {fileID: 1986895439}
   m_Layer: 5
   m_Name: Group_Stats
   m_TagString: Untagged
@@ -12979,6 +13018,22 @@ MonoBehaviour:
   m_Spacing: {x: 34, y: 34}
   m_Constraint: 2
   m_ConstraintCount: 5
+--- !u!114 &1986895439
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1986895436}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f5080cb3235e440469ee0f4290fa5783, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  BestTimeName: <color=#B3B5C7><size=65%>Best Time</size></color>
+  BestTimeTarget: {fileID: 1317780082}
+  EnemiesKilledName: <color=#B3B5C7><size=65%>Enemies Killed</size></color>
+  EnemiesKilledTarget: {fileID: 1420486626}
 --- !u!1 &1989038212
 GameObject:
   m_ObjectHideFlags: 0
@@ -13142,6 +13197,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2113445290}
   - component: {fileID: 2113445291}
+  - component: {fileID: 2113445292}
   m_Layer: 5
   m_Name: Group_Stats
   m_TagString: Untagged
@@ -13195,6 +13251,22 @@ MonoBehaviour:
   m_Spacing: {x: 34, y: 34}
   m_Constraint: 2
   m_ConstraintCount: 5
+--- !u!114 &2113445292
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2113445289}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f5080cb3235e440469ee0f4290fa5783, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  BestTimeName: <color=#B3B5C7><size=65%>Best Time</size></color>
+  BestTimeTarget: {fileID: 970983308}
+  EnemiesKilledName: <color=#B3B5C7><size=65%>Enemies Killed</size></color>
+  EnemiesKilledTarget: {fileID: 1314171327}
 --- !u!1 &2120901262
 GameObject:
   m_ObjectHideFlags: 0
@@ -16538,6 +16610,18 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: 335198361}
+        m_TargetAssemblyTypeName: GameManager, Assembly-CSharp
+        m_MethodName: ResumeGame
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!222 &2808909630790788012
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -18505,6 +18589,18 @@ MonoBehaviour:
       - m_Target: {fileID: 1741200676}
         m_TargetAssemblyTypeName: Project.Runtime.Scripts.UI.Core.ScreenLoader, Assembly-CSharp
         m_MethodName: OnButtonShowSettingsPopup
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 335198361}
+        m_TargetAssemblyTypeName: GameManager, Assembly-CSharp
+        m_MethodName: PauseGame
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

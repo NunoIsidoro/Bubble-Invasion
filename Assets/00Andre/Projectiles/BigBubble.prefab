@@ -115,7 +115,7 @@ Transform:
   m_GameObject: {fileID: 5329520233676817777}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -23.7, y: -5.4, z: 0}
+  m_LocalPosition: {x: -22, y: -5.4, z: 0}
   m_LocalScale: {x: 3, y: 3, z: 3}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -193,9 +193,9 @@ MonoBehaviour:
   amplitude: 2
   frequency: 5
   horizontalOffset: 5
-  chanceIncrease: 0.1
-  threshold: 0.1
   rotationSpeed: 100
+  threshold: 0.1
+  chanceIncrease: 0.1
 --- !u!58 &1428528341705466563
 CircleCollider2D:
   m_ObjectHideFlags: 0

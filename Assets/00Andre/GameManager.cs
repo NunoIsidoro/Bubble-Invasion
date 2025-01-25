@@ -1,8 +1,11 @@
 using System;
+using System.Collections;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
+    public PlayerStats PlayerStats;
     public GameObject Game;
     public GameObject GameInstances;
     public WaveManager WaveManager;
@@ -16,7 +19,7 @@ public class GameManager : MonoBehaviour
     public void PauseGame()
     {
         // freeze game
-        Time.timeScale = 0;
+        StartCoroutine(WaitAndFreezeGame());
     }
     
     
@@ -27,9 +30,28 @@ public class GameManager : MonoBehaviour
     }
     
     
+    private IEnumerator WaitAndFreezeGame()
+    {
+        yield return new WaitForSeconds(0.5f);
+        Time.timeScale = 0;
+    }
+    
+    
     public void LeaveGame()
     {
-        //SceneManager.LoadScene(0);
+        SceneManager.LoadScene(0);
+        Time.timeScale = 1;
+        /*
+        WaveManager.EndGame();
+        Game.SetActive(false);
+        */
+    }
+
+
+    public void TryAgain()
+    {
+        Time.timeScale = 1;
+        // remove enemies
         foreach (Transform child in GameInstances.transform)
         {
             try
@@ -40,8 +62,14 @@ public class GameManager : MonoBehaviour
             {
             }
         }
+        
+        //reset wave
         WaveManager.EndGame();
-        Game.SetActive(false);
+        
+        // reset hearts
+        PlayerStats.transform.position = new Vector3(0, 15.96f, 0);
+        PlayerStats.ResetHearts();
+        PlayerStats.isDefeatPopupActive = false;
     }
     
     

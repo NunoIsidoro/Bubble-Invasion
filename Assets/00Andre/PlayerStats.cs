@@ -1,7 +1,9 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Project.Runtime.Scripts.Core;
 using Project.Runtime.Scripts.UI.Core;
+using Project.Runtime.Scripts.UI.Gameplay.Components;
 using UnityEngine;
 
 public class PlayerStats : MonoBehaviour
@@ -10,6 +12,9 @@ public class PlayerStats : MonoBehaviour
     public GameObject HeartContainer;
     public GameObject heartPrefab;
     public List<GameObject> hearts;
+    public Timer timer;
+    
+    public bool isDefeatPopupActive = false;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -68,11 +73,55 @@ public class PlayerStats : MonoBehaviour
             AddHeart();
         }
     }
+    
+    private IEnumerator WaitAndFreezeGame()
+    {
+        yield return new WaitForSeconds(0.5f);
+        Time.timeScale = 0;
+    }
 
     public void GameOver()
     {
+        if (isDefeatPopupActive) return;
+        
         Debug.Log("Game Over");
+
+        // Verifica se o tempo atual é melhor que o BestTime
+        string currentTime = timer.GetTime();
+        string bestTime = PlayerPrefsManager.BestTime;
+        
+        
+        Debug.Log($"Current Time: {currentTime}");
+        Debug.Log($"Best Time: {bestTime}");
+        Debug.Log($"Is Better Time: {IsBetterTime(currentTime, bestTime)}");
+        if (IsBetterTime(currentTime, bestTime))
+        {
+            Debug.Log($"New Best Time: {currentTime}!");
+            PlayerPrefsManager.BestTime = currentTime;
+        }
+        
+        StartCoroutine(WaitAndFreezeGame());
         screenLoader.OnButtonShowDefeatPopup();
+        isDefeatPopupActive = true;
+    }
+
+    private bool IsBetterTime(string current, string best)
+    {
+        if (best == "00:00") return true; // Caso padrão: sem tempo registrado ainda
+
+        // Converte ambos os tempos para segundos para comparação
+        int currentSeconds = TimeToSeconds(current);
+        int bestSeconds = TimeToSeconds(best);
+
+        return currentSeconds > bestSeconds; // Um tempo menor é melhor
+    }
+
+    private int TimeToSeconds(string time)
+    {
+        var parts = time.Split(':');
+        int minutes = int.Parse(parts[0]);
+        int seconds = int.Parse(parts[1]);
+        return minutes * 60 + seconds;
     }
 
     // OnTriggerEnter2D to detect collisions with bubbles

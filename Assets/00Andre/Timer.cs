@@ -35,6 +35,15 @@ namespace Project.Runtime.Scripts.UI.Gameplay.Components
         }
         
         
+        public string GetTime()
+        {
+            var minutes = Mathf.FloorToInt(_timeElapsed / 60);
+            var seconds = Mathf.FloorToInt(_timeElapsed % 60);
+
+            return $"{minutes:00}:{seconds:00}";
+        }
+        
+        
         public void Pause() => _isPaused = true;
         public void Resume() => _isPaused = false;
 

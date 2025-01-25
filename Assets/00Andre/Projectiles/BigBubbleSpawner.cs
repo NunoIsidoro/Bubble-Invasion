@@ -13,10 +13,10 @@ public class BigBubbleSpawner : MonoBehaviour
         for (int i = 0; i < maxSpawnableBubbles; i++)
         {
             // 50% de chance de spawnar cada bolha
-            if (Random.value <= 0.5f)
-            {
+            // if (Random.value <= 0.5f)
+            // {
                 SpawnBigBubble();
-            }
+                // }
         }
     }
 
@@ -30,6 +30,7 @@ public class BigBubbleSpawner : MonoBehaviour
         // make randomY spawn in the bottom half of the screen
         float randomY = Random.Range((-screenHeight / 2) + 3f, 0f);
         float randomX = Random.value > 0.5f ? leftLimitX : rightLimitX;
+        Debug.Log($"Spawning big BIG bubble at {randomX}, {randomY}");
 
         Instantiate(bigBubblePrefab, new Vector2(randomX, randomY), Quaternion.identity, bigBubbleParent.transform);
     }

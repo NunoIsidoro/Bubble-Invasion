@@ -6,17 +6,18 @@ public class CircularMovement : MonoBehaviour
     public float amplitude; // Amplitude da onda (distância para cima e para baixo)
     public float frequency; // Frequência da onda (quantas vezes ela oscila por unidade de tempo)
     public float horizontalOffset = 0f; // Distância extra fora da tela
-    public float chanceIncrease; // Aumento da chance de destruição a cada passagem (25%)
-    public float threshold = 0.1f; // Tolerância para considerar que o objeto atingiu um limite (pode ser ajustado)
     public float rotationSpeed = -100f; // Velocidade de rotação da bola (inverte a rotação com sinal negativo)
+    public float threshold = 0.1f; // Tolerância para considerar que o objeto atingiu um limite
 
-    private float startPosX; // Posição inicial horizontal
-    private float startPosY; // Posição inicial horizontal
-    private bool isRightSide; // Variável para determinar se começa à direita
+    private float startPosY; // Posição inicial vertical
     private float leftLimit; // Posição do limite esquerdo
     private float rightLimit; // Posição do limite direito
     private int hitCount = 0; // Contador de quantas vezes o objeto atingiu um limite
+    public float chanceIncrease; // Aumento da chance de destruição a cada passagem (25%)
     private bool hasBeenDestroyed = false; // Flag para impedir destruição repetida
+
+    private float creationTime; // Armazena o tempo desde a criação do objeto
+    private int movementDirection; // 1 para iniciar à direita, -1 para iniciar à esquerda
 
     void Start()
     {
@@ -27,38 +28,43 @@ public class CircularMovement : MonoBehaviour
         leftLimit = GameObject.Find("left").transform.position.x;
         rightLimit = GameObject.Find("right").transform.position.x;
 
-        // Inicializa a posição inicial aleatoriamente na ponta esquerda ou direita com o offset
-        isRightSide = Random.Range(-1f, 1f) > 0; // Se for maior que 0, começa à direita
+        // Define a direção inicial aleatória (50% de chance)
+        movementDirection = Random.value > 0.5f ? 1 : -1;
 
-        // Definindo o valor inicial da posição horizontal com o offset
-        startPosX = isRightSide ? rightLimit + horizontalOffset : leftLimit - horizontalOffset;
-
-        // Obtém os limites superior e inferior da tela
+        // Inicializa a posição inicial com base na direção escolhida
+        float startPosX = movementDirection == 1 ? leftLimit : rightLimit;
         startPosY = transform.position.y;
         transform.position = new Vector2(startPosX, startPosY);
+
+        // Armazena o tempo de criação do objeto
+        creationTime = Time.time;
     }
 
     void Update()
     {
-        // Calcula a direção correta para o movimento horizontal
-        float direction = isRightSide ? -1f : 1f;  // Se começar à direita, vai para a direita (1); se começar à esquerda, vai para a esquerda (-1)
+        // Calcula o deslocamento horizontal com o tempo desde a criação, ajustado pela direção
+        float newX = Mathf.PingPong((Time.time - creationTime) * speed, rightLimit - leftLimit) + leftLimit;
 
-        // Atualiza a posição horizontal com base no movimento desejado
-        float newX = Mathf.PingPong(Time.time * speed, rightLimit - leftLimit) + leftLimit;
+        // Se o objeto começa à direita, invertemos o cálculo de `newX`
+        if (movementDirection == -1)
+        {
+            newX = rightLimit - Mathf.PingPong((Time.time - creationTime) * speed, rightLimit - leftLimit);
+        }
 
-        // Calcula a nova posição vertical com base na função seno
-        float newY = startPosY + Mathf.Sin(Time.time * frequency) * amplitude;
+        // Calcula a nova posição vertical com base na função seno, usando o tempo desde a criação
+        float newY = startPosY + Mathf.Sin((Time.time - creationTime) * frequency) * amplitude;
 
         // Atualiza a posição do círculo
         transform.position = new Vector2(newX, newY);
 
-        // Rotaciona o objeto continuamente no sentido oposto
-        transform.Rotate(Vector3.forward, -rotationSpeed * Time.deltaTime); // Rotação contínua ao contrário
+        // Rotaciona o objeto continuamente
+        transform.Rotate(Vector3.forward, -rotationSpeed * Time.deltaTime);
 
         // Verifica se o objeto atingiu o limite esquerdo ou direito, considerando a tolerância (threshold)
         if (!hasBeenDestroyed)
         {
-            if ((newX <= leftLimit + threshold || newX >= rightLimit - threshold)) // Verificação com threshold
+            // Verifica se o objeto atingiu o limite esquerdo ou direito, considerando a tolerância
+            if (Mathf.Abs(newX - leftLimit) <= threshold || Mathf.Abs(newX - rightLimit) <= threshold)
             {
                 HandleLimitHit();
             }
