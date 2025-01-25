@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using Project.Runtime.Scripts.UI.Core;
 using UnityEngine;
@@ -48,6 +49,11 @@ public class PlayerStats : MonoBehaviour
         GameObject newHeart = Instantiate(heartPrefab, HeartContainer.transform);
         hearts.Add(newHeart);
     }
+    
+    public int GetHeartsCount()
+    {
+        return hearts.Count;
+    }
 
     public void ResetHearts()
     {
@@ -70,16 +76,51 @@ public class PlayerStats : MonoBehaviour
     }
 
     // OnTriggerEnter2D to detect collisions with bubbles
+    private float previousPlayerSpeed = 0;
+    private bool recentlyTriggered = false;
+    private bool recentlyTriggeredKrab = false;
+    private float cooldownTime = 0.1f; // Tempo em segundos para evitar múltiplos disparos
+
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        // Check if the collided object has a "Bubble" tag or a component indicating it's a bubble
+        if (recentlyTriggered) return; // Ignora se já foi disparado recentemente
+
         if (collision.CompareTag("Bubble"))
         {
-            // Optional: Destroy the bubble after the collision
-            Destroy(collision.gameObject);
-            
-            Debug.Log("Hit by a bubble!");
+            recentlyTriggered = true; // Marca que o evento foi disparado
             TakeDamage();
+            Destroy(collision.gameObject);
+            Debug.Log("Hit by a bubble!");
+            Invoke(nameof(ResetTrigger), cooldownTime); // Reseta o controle após o cooldown
         }
+        else if (collision.CompareTag("PowerUpLife"))
+        {
+            recentlyTriggered = true; // Marca que o evento foi disparado
+            AddHeart();
+            Destroy(collision.gameObject);
+            Invoke(nameof(ResetTrigger), cooldownTime); // Reseta o controle após o cooldown
+        }
+        else if (collision.CompareTag("krab"))
+        {
+            if (recentlyTriggeredKrab) return; // Ignora se já foi disparado recentemente
+            recentlyTriggeredKrab = true;
+            
+            // disable movement
+            previousPlayerSpeed = GetComponent<PlayerMovement>().speed;
+            GetComponent<PlayerMovement>().speed = 0;
+            collision.GetComponent<krab>().StayStill(this);
+        }
+    }
+
+    public void ResumeMovement()
+    {
+        recentlyTriggeredKrab = false;
+        GetComponent<PlayerMovement>().speed = previousPlayerSpeed;
+    }
+    
+
+    private void ResetTrigger()
+    {
+        recentlyTriggered = false; // Libera novamente para novas colisões
     }
 }

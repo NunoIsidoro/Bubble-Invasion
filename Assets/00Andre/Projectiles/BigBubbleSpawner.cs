@@ -29,13 +29,13 @@ public class BigBubbleSpawner : MonoBehaviour
         float screenHeight = Camera.main.orthographicSize * 2;
         // make randomY spawn in the bottom half of the screen
         float randomY = Random.Range((-screenHeight / 2) + 3f, 0f);
-
-        float randomX = Random.Range(leftLimitX, rightLimitX);
+        float randomX = Random.value > 0.5f ? leftLimitX : rightLimitX;
 
         Instantiate(bigBubblePrefab, new Vector2(randomX, randomY), Quaternion.identity, bigBubbleParent.transform);
     }
     
     public void ResetSpawner()
     {
+        // nada
     }
 }

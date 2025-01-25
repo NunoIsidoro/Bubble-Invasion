@@ -6,14 +6,16 @@ public class WaveManager : MonoBehaviour
 {
     public EnemySpawner enemySpawner;
     public BigBubbleSpawner bigBubbleSpawner;
+    public KrabSpawner KrabSpawner;
     public PlayerStats PlayerStats;
-    public float initialTimeBetweenWaves = 5f;
+    public float initialTimeBetweenWaves = 0f;
     public float timeIncrement = 5f;
     public float maxTimeBetweenWaves = 60f;
 
-    private int currentWave = 1;
+    public int currentWave = 1;
     private float timeBetweenWaves; // Tempo atual entre waves
     private int maxSpawnableBubbles = 1;
+    private int maxSpawnableKrabs = 1;
     
     [Header("UI")]
     public TextMeshProUGUI waveText;
@@ -32,8 +34,11 @@ public class WaveManager : MonoBehaviour
             Debug.Log($"Iniciando Wave {currentWave}.");
             enemySpawner.StartSpawning(currentWave + 1);
             
-            if (currentWave >= 3)
-                bigBubbleSpawner.StartSpawning(currentWave);
+            if (currentWave >= 2)
+                bigBubbleSpawner.StartSpawning(maxSpawnableBubbles);
+            
+            if (currentWave >= 0)
+                KrabSpawner.StartSpawning(maxSpawnableKrabs);
 
             while (!enemySpawner.AreAllEnemiesSpawned())
             {
@@ -58,6 +63,11 @@ public class WaveManager : MonoBehaviour
             if (currentWave >= 3 && currentWave % 2 == 0)
             {
                 maxSpawnableBubbles++;
+            }
+            // Incrementa a capacidade de spawnar Krabs a cada 3 waves
+            if (currentWave >= 5 && currentWave % 3 == 0)
+            {
+                maxSpawnableKrabs++; // Aumenta o número máximo de Krabs spawnados por wave
             }
 
             // Aumenta o tempo entre waves, mas não ultrapassa o máximo

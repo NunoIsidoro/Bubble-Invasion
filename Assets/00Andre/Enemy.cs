@@ -1,6 +1,13 @@
 using System.Collections;
 using UnityEngine;
 
+public enum EnemyDifficulty
+{
+    Easy,
+    Medium,
+    Hard
+}
+
 public class Enemy : MonoBehaviour
 {
     public GameObject BubbleParent;
@@ -13,18 +20,68 @@ public class Enemy : MonoBehaviour
 
     public SimpleBubble simpleBubble;
     public float spawnBubbleDelay;
+    private EnemyDifficulty difficulty;
 
-    public void Initialize(Collider2D gameArea, GameObject bubbleParent)
+    public void Initialize(Collider2D gameArea, GameObject bubbleParent, int currentWave)
     {
         Debug.Log("Inimigo inicializado!");
         GameArea = gameArea;
         BubbleParent = bubbleParent;
+        
+        difficulty = DetermineDifficulty(currentWave);
+
+        // Ajustar o delay de spawn de bolhas com base na dificuldade
+        spawnBubbleDelay = difficulty switch
+        {
+            EnemyDifficulty.Easy => Random.Range(2f, 4f),
+            EnemyDifficulty.Medium => Random.Range(1.5f, 3f),
+            EnemyDifficulty.Hard => Random.Range(1f, 2f),
+            _ => 3f
+        };
+        
+        // switch to change the color of the enemy based on the difficulty, white easy, orange medium, red hard
+        switch (difficulty)
+        {
+            case EnemyDifficulty.Easy:
+                GetComponent<SpriteRenderer>().color = Color.white;
+                break;
+            case EnemyDifficulty.Medium:
+                GetComponent<SpriteRenderer>().color = new Color(1f, 0.5f, 0f);
+                break;
+            case EnemyDifficulty.Hard:
+                GetComponent<SpriteRenderer>().color = Color.red;
+                break;
+        }
 
         spawnBubbleDelay = Random.Range(1f, 3f);
         StartCoroutine(MoveToInitialPositionAndBounce());
         StartCoroutine(SpawnBubbles());
     }
 
+    private EnemyDifficulty DetermineDifficulty(int wave)
+    {
+        // Chances baseadas na wave
+        float easyChance = Mathf.Clamp01(1f - (wave - 1) * 0.1f); // Chance de Easy diminui com waves
+        float mediumChance = wave >= 3 ? Mathf.Clamp01((wave - 3) * 0.1f) : 0f; // Medium começa na wave 3
+        float hardChance = wave >= 5 ? Mathf.Clamp01((wave - 5) * 0.1f) : 0f;   // Hard começa na wave 5
+
+        // Normalizar chances
+        float totalChance = easyChance + mediumChance + hardChance;
+        easyChance /= totalChance;
+        mediumChance /= totalChance;
+        hardChance /= totalChance;
+
+        // Sorteio para definir dificuldade
+        float randomValue = Random.value;
+
+        if (randomValue <= easyChance)
+            return EnemyDifficulty.Easy;
+        else if (randomValue <= easyChance + mediumChance)
+            return EnemyDifficulty.Medium;
+        else
+            return EnemyDifficulty.Hard;
+    }
+    
     private IEnumerator MoveToInitialPositionAndBounce()
     {
         float randomY = GetRandomPositionWithinCollider().y;
@@ -64,7 +121,21 @@ public class Enemy : MonoBehaviour
         while (true)
         {
             yield return new WaitForSeconds(spawnBubbleDelay);
-            SpawnBubble();
+            
+            // Define o número de bolhas a spawnar com base na dificuldade
+            int bubbleCount = difficulty switch
+            {
+                EnemyDifficulty.Easy => 1,
+                EnemyDifficulty.Medium => 2,
+                EnemyDifficulty.Hard => 4,
+                _ => 1
+            };
+
+            // Spawn das bolhas
+            for (int i = 0; i < bubbleCount; i++)
+            {
+                SpawnBubble();
+            }
         }
     }
 

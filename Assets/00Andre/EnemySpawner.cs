@@ -10,6 +10,7 @@ public class EnemySpawner : MonoBehaviour
     public GameObject EnemyPrefab;
     public Collider2D SpawnArea;
     public Collider2D GameArea;
+    public WaveManager WaveManager;
     public float spawnInterval = 0.5f;
 
     private int enemiesToSpawn;
@@ -64,7 +65,7 @@ public class EnemySpawner : MonoBehaviour
         Vector2 spawnPosition = GetRandomPositionWithinCollider();
         var obj = Instantiate(EnemyPrefab, spawnPosition, Quaternion.identity, EnemyParent.transform);
         obj.SetActive(true);
-        obj.GetComponent<Enemy>().Initialize(GameArea, EnemyParent);
+        obj.GetComponent<Enemy>().Initialize(GameArea, EnemyParent, WaveManager.currentWave);
         enemies.Add(obj.GetComponent<Enemy>());
     }
 
