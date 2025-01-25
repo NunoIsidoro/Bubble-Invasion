@@ -21,12 +21,9 @@ public class PlayerMovement : MonoBehaviour
     void Update()
     {
         Move = Input.GetAxis("Horizontal");
+        
+        rb.linearVelocity = new Vector2(speed * Move, rb.linearVelocity.y);
 
-        // Disable horizontal movement while jumping
-        if (!isJumping)
-        {
-            rb.linearVelocity = new Vector2(speed * Move, rb.linearVelocity.y);
-        }
 
         // Jump logic
         if (Input.GetButtonDown("Jump") && isJumping == false)
