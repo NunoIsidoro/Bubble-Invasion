@@ -1,4 +1,5 @@
 using System.Collections;
+using MoreMountains.Feedbacks;
 using Project.Runtime.Scripts.Core;
 using UnityEngine;
 
@@ -21,7 +22,9 @@ public class Enemy : MonoBehaviour
 
     public SimpleBubble simpleBubble;
     public float spawnBubbleDelay;
-    private EnemyDifficulty difficulty;
+    public EnemyDifficulty difficulty;
+
+    public MMF_Player enemy_attack_feedback;
 
     public void Initialize(Collider2D gameArea, GameObject bubbleParent, int currentWave)
     {
@@ -30,6 +33,9 @@ public class Enemy : MonoBehaviour
         BubbleParent = bubbleParent;
         
         difficulty = DetermineDifficulty(currentWave);
+        
+        // get pose 0 based on difficulty
+        GetComponent<SpriteRenderer>().sprite = EnemyPoseGetter.instance.GetPose(difficulty, 0);
 
         // Ajustar o delay de spawn de bolhas com base na dificuldade
         spawnBubbleDelay = difficulty switch
@@ -40,19 +46,7 @@ public class Enemy : MonoBehaviour
             _ => 3f
         };
         
-        // switch to change the color of the enemy based on the difficulty, white easy, orange medium, red hard
-        switch (difficulty)
-        {
-            case EnemyDifficulty.Easy:
-                GetComponent<SpriteRenderer>().color = Color.white;
-                break;
-            case EnemyDifficulty.Medium:
-                GetComponent<SpriteRenderer>().color = new Color(1f, 0.5f, 0f);
-                break;
-            case EnemyDifficulty.Hard:
-                GetComponent<SpriteRenderer>().color = Color.red;
-                break;
-        }
+        GetComponent<SpriteRenderer>().color = Color.white;
 
         spawnBubbleDelay = Random.Range(1f, 3f);
         StartCoroutine(MoveToInitialPositionAndBounce());
@@ -135,6 +129,7 @@ public class Enemy : MonoBehaviour
             // Spawn das bolhas
             for (int i = 0; i < bubbleCount; i++)
             {
+                enemy_attack_feedback.PlayFeedbacks();
                 SpawnBubble();
             }
         }
@@ -211,5 +206,28 @@ public class Enemy : MonoBehaviour
             PlayerPrefsManager.EnemiesKilled++;
             Debug.Log("Hit by a player bubble!");
         }
+    }
+    
+    public void ChangePose()
+    {
+        // Obter o SpriteRenderer
+        SpriteRenderer spriteRenderer = GetComponent<SpriteRenderer>();
+
+        // Pega a pose atual
+        Sprite currentPose = spriteRenderer.sprite;
+
+        // Variável para a nova pose
+        Sprite newPose;
+
+        // Garante que a nova pose seja diferente da atual
+        do
+        {
+            newPose = EnemyPoseGetter.instance.GetRandomPose(difficulty);
+        } while (newPose == currentPose);
+
+        // Define a nova pose
+        spriteRenderer.sprite = newPose;
+
+        Debug.Log("Pose changed!");
     }
 }
