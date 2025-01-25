@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using System.Collections;
 
@@ -111,7 +112,13 @@ public class PlayerAttack : MonoBehaviour
     {
         yield return new WaitForSeconds(delay); // Wait for the specified delay time
         Debug.Log($"Destroying {bubble.name} after {delay} seconds.");
-        Destroy(bubble); // Destroy the bubble
+        try
+        {
+            Destroy(bubble); // Destroy the bubble
+        }
+        catch (Exception)
+        {
+        }
     }
 
 
