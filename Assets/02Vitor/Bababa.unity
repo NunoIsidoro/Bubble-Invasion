@@ -2638,7 +2638,6 @@ GameObject:
   - component: {fileID: 537816364}
   - component: {fileID: 537816363}
   - component: {fileID: 537816367}
-  - component: {fileID: 537816368}
   m_Layer: 6
   m_Name: Player
   m_TagString: Untagged
@@ -2661,13 +2660,14 @@ MonoBehaviour:
   meleeWeaponPrefab: {fileID: 415167924947520932, guid: 205b83252652748f8b22c9f3c54b9903, type: 3}
   weaponSpawnPoint: {fileID: 712012662}
   attackRange: 1
-  attackDuration: 0.2
-  attackCooldown: 0.4
-  knockbackForce: 30
+  attackDuration: 0.3
+  attackCooldown: 0.6
+  knockbackForce: 20
   enemyLayers:
     serializedVersion: 2
     m_Bits: 256
   attackRadius: 1
+  animator: {fileID: 1261456450}
 --- !u!114 &537816364
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2681,9 +2681,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 12
-  jump: 50
+  jump: 18
   rb: {fileID: 537816365}
-  animator: {fileID: 537816368}
+  animator: {fileID: 1261456450}
   isJumping: 0
 --- !u!50 &537816365
 Rigidbody2D:
@@ -2749,28 +2749,6 @@ MonoBehaviour:
   hearts: []
   timer: {fileID: 7848811726079119153}
   isDefeatPopupActive: 0
---- !u!95 &537816368
-Animator:
-  serializedVersion: 7
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 537816362}
-  m_Enabled: 1
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 423422e7a63dc42e2b05b54d0587d1be, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_StabilizeFeet: 0
-  m_AnimatePhysics: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &619394800
 GameObject:
   m_ObjectHideFlags: 0
@@ -6191,7 +6169,7 @@ Animator:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1261456447}
-  m_Enabled: 0
+  m_Enabled: 1
   m_Avatar: {fileID: 0}
   m_Controller: {fileID: 9100000, guid: 423422e7a63dc42e2b05b54d0587d1be, type: 2}
   m_CullingMode: 0

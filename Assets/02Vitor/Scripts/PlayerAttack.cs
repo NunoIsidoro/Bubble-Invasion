@@ -17,15 +17,13 @@ public class PlayerAttack : MonoBehaviour
     private float attackVisualTimer;    // Timer to track how long the visual stays
     public float attackRadius = 1f; // Radius of the attack area
 
-    private Animator animator;
+    public Animator animator;
 
     void Start()
     {
         attackTimer = 0f;
         isAttacking = false;
 
-        // Get the Animator component from the player
-        animator = GetComponent<Animator>();
     }
 
     void Update()
