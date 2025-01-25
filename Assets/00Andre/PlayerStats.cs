@@ -1,10 +1,13 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using MoreMountains.Feedbacks;
 using Project.Runtime.Scripts.Core;
 using Project.Runtime.Scripts.UI.Core;
 using Project.Runtime.Scripts.UI.Gameplay.Components;
 using UnityEngine;
+using UnityEngine.UI;
+using Random = UnityEngine.Random;
 
 public class PlayerStats : MonoBehaviour
 {
@@ -16,6 +19,9 @@ public class PlayerStats : MonoBehaviour
     public PlayerAttack playerAttack;
     
     public bool isDefeatPopupActive = false;
+    
+    public MMF_Player player_meme_take_damage_feedback;
+    public Image memeImage;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -32,6 +38,11 @@ public class PlayerStats : MonoBehaviour
     // take damage, remove a heart
     public void TakeDamage()
     {
+        if (Random.value < 0.75f && hearts.Count > 3)
+        {
+            player_meme_take_damage_feedback.PlayFeedbacks();
+        }
+        
         if (hearts.Count > 1)
         {
             Destroy(hearts[hearts.Count - 1]);
@@ -47,6 +58,7 @@ public class PlayerStats : MonoBehaviour
             catch (Exception)
             {
             }
+            memeImage.GetComponent<Image>().color = new Color(1, 1, 1, 0f);
             Debug.Log("Game Over");
             GameOver();
         }
