@@ -6,6 +6,7 @@ using Random = UnityEngine.Random;
 
 public class EnemySpawner : MonoBehaviour
 {
+    public GameObject EnemyParent;
     public GameObject EnemyPrefab;
     public Collider2D SpawnArea;
     public Collider2D GameArea;
@@ -61,9 +62,9 @@ public class EnemySpawner : MonoBehaviour
     private void SpawnEnemy()
     {
         Vector2 spawnPosition = GetRandomPositionWithinCollider();
-        var obj = Instantiate(EnemyPrefab, spawnPosition, Quaternion.identity);
+        var obj = Instantiate(EnemyPrefab, spawnPosition, Quaternion.identity, EnemyParent.transform);
         obj.SetActive(true);
-        obj.GetComponent<Enemy>().Initialize(GameArea);
+        obj.GetComponent<Enemy>().Initialize(GameArea, EnemyParent);
         enemies.Add(obj.GetComponent<Enemy>());
     }
 
@@ -89,5 +90,19 @@ public class EnemySpawner : MonoBehaviour
         while (!SpawnArea.OverlapPoint(randomPosition)); // Verifica se a posição está dentro do Collider2D
 
         return randomPosition;
+    }
+    
+    public void ResetSpawner()
+    {
+        if (spawnCoroutine != null)
+        {
+            StopCoroutine(spawnCoroutine);
+        }
+        
+        foreach (var enemy in enemies)
+        {
+            enemy.EndWave();
+        }
+        enemies = new List<Enemy>();
     }
 }

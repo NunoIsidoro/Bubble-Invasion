@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class Enemy : MonoBehaviour
 {
+    public GameObject BubbleParent;
     public Collider2D GameArea;
     private Tween bounceTween;
     
@@ -12,10 +13,11 @@ public class Enemy : MonoBehaviour
     public float spawnBubbleDelay;
     
     
-    public void Initialize(Collider2D gameArea)
+    public void Initialize(Collider2D gameArea, GameObject bubbleParent)
     {
         Debug.Log("Inimigo inicializado!");
         GameArea = gameArea;
+        BubbleParent = bubbleParent;
 
         spawnBubbleDelay = Random.Range(1f, 3f);
         StartCoroutine(MoveToInitialPositionAndBounce());
@@ -38,7 +40,6 @@ public class Enemy : MonoBehaviour
             .SetLoops(-1);
     }
     
-    
     private IEnumerator SpawnBubbles()
     {
         while (true)
@@ -51,7 +52,7 @@ public class Enemy : MonoBehaviour
     
     private void SpawnBubble()
     {
-        var prefab = Instantiate(simpleBubble, transform.position, Quaternion.identity);
+        var prefab = Instantiate(simpleBubble, transform.position, Quaternion.identity, BubbleParent.transform);
         prefab.Initialize(spawnBubbleDelay);
     }
     
