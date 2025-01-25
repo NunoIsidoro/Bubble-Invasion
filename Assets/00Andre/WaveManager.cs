@@ -6,6 +6,7 @@ public class WaveManager : MonoBehaviour
 {
     public EnemySpawner enemySpawner;
     public BigBubbleSpawner bigBubbleSpawner;
+    public PlayerStats PlayerStats;
     public float initialTimeBetweenWaves = 5f;
     public float timeIncrement = 5f;
     public float maxTimeBetweenWaves = 60f;
@@ -80,6 +81,7 @@ public class WaveManager : MonoBehaviour
         currentWave = 1;
         timeBetweenWaves = initialTimeBetweenWaves;
         
+        PlayerStats.ResetHearts();
         enemySpawner.ResetSpawner();
         bigBubbleSpawner.ResetSpawner();
     }

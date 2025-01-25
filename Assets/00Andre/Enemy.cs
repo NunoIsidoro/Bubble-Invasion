@@ -1,18 +1,19 @@
 using System.Collections;
-using System.Collections.Generic;
-using DG.Tweening;
 using UnityEngine;
 
 public class Enemy : MonoBehaviour
 {
     public GameObject BubbleParent;
     public Collider2D GameArea;
-    private Tween bounceTween;
-    
+
+    private bool isBouncing;
+    private Vector3 initialPosition;
+    private float bounceSpeed = 1f;
+    private float bounceHeight = 0.1f;
+
     public SimpleBubble simpleBubble;
     public float spawnBubbleDelay;
-    
-    
+
     public void Initialize(Collider2D gameArea, GameObject bubbleParent)
     {
         Debug.Log("Inimigo inicializado!");
@@ -23,23 +24,41 @@ public class Enemy : MonoBehaviour
         StartCoroutine(MoveToInitialPositionAndBounce());
         StartCoroutine(SpawnBubbles());
     }
-    
 
     private IEnumerator MoveToInitialPositionAndBounce()
     {
-        var randomY = GetRandomPositionWithinCollider().y;
-        transform.DOMoveY(randomY, 1f).SetEase(Ease.InOutSine);
+        float randomY = GetRandomPositionWithinCollider().y;
+        Vector3 targetPosition = new Vector3(transform.position.x, randomY, transform.position.z);
 
-        yield return new WaitForSeconds(1f);
+        // Move para a posição inicial de forma manual
+        float moveDuration = 1f;
+        float elapsedTime = 0f;
 
-        var currentPosition = transform.position;
+        Vector3 startPosition = transform.position;
+        while (elapsedTime < moveDuration)
+        {
+            transform.position = Vector3.Lerp(startPosition, targetPosition, elapsedTime / moveDuration);
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
 
-        bounceTween = DOTween.Sequence()
-            .Append(transform.DOMoveY(currentPosition.y + 0.1f, 1f).SetEase(Ease.InOutSine))
-            .Append(transform.DOMoveY(currentPosition.y, 1f).SetEase(Ease.InOutSine))
-            .SetLoops(-1);
+        transform.position = targetPosition;
+
+        // Começa o movimento de bounce
+        initialPosition = transform.position;
+        isBouncing = true;
     }
-    
+
+    private void Update()
+    {
+        // Movimento de bounce contínuo
+        if (isBouncing)
+        {
+            float newY = initialPosition.y + Mathf.Sin(Time.time * bounceSpeed) * bounceHeight;
+            transform.position = new Vector3(transform.position.x, newY, transform.position.z);
+        }
+    }
+
     private IEnumerator SpawnBubbles()
     {
         while (true)
@@ -49,28 +68,39 @@ public class Enemy : MonoBehaviour
         }
     }
 
-    
     private void SpawnBubble()
     {
         var prefab = Instantiate(simpleBubble, transform.position, Quaternion.identity, BubbleParent.transform);
         prefab.Initialize(spawnBubbleDelay);
     }
-    
-    
+
     public void EndWave()
     {
-        // Para a animação de bounce
-        if (bounceTween != null && bounceTween.IsActive())
-        {
-            bounceTween.Kill();
-        }
+        // Para o movimento de bounce
+        isBouncing = false;
 
         // Move o inimigo para fora da tela e destrói o objeto
-        transform.DOMoveY(transform.position.y + 10f, 1f).SetEase(Ease.InOutSine);
-        Destroy(gameObject, 2f);
+        StartCoroutine(MoveOutAndDestroy());
     }
 
-    
+    private IEnumerator MoveOutAndDestroy()
+    {
+        Vector3 targetPosition = new Vector3(transform.position.x, transform.position.y + 10f, transform.position.z);
+
+        float moveDuration = 1f;
+        float elapsedTime = 0f;
+
+        Vector3 startPosition = transform.position;
+        while (elapsedTime < moveDuration)
+        {
+            transform.position = Vector3.Lerp(startPosition, targetPosition, elapsedTime / moveDuration);
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+
+        Destroy(gameObject);
+    }
+
     private Vector2 GetRandomPositionWithinCollider()
     {
         if (GameArea == null)
