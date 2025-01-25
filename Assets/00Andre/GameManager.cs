@@ -39,12 +39,27 @@ public class GameManager : MonoBehaviour
     
     public void LeaveGame()
     {
-        SceneManager.LoadScene(0);
         Time.timeScale = 1;
-        /*
+        // remove enemies
+        foreach (Transform child in GameInstances.transform)
+        {
+            try
+            {
+                Destroy(child.gameObject);
+            }
+            catch (Exception)
+            {
+            }
+        }
+        
+        //reset wave
         WaveManager.EndGame();
+        
+        // reset hearts
+        PlayerStats.transform.position = new Vector3(0, 15.96f, 0);
+        PlayerStats.ResetHearts();
+        PlayerStats.isDefeatPopupActive = false;
         Game.SetActive(false);
-        */
     }
 
 
@@ -64,7 +79,7 @@ public class GameManager : MonoBehaviour
         }
         
         //reset wave
-        WaveManager.EndGame();
+        WaveManager.RestartGame();
         
         // reset hearts
         PlayerStats.transform.position = new Vector3(0, 15.96f, 0);

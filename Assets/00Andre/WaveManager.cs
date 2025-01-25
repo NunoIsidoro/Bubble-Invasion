@@ -105,6 +105,23 @@ public class WaveManager : MonoBehaviour
         PlayerStats.ResetHearts();
         enemySpawner.ResetSpawner();
         bigBubbleSpawner.ResetSpawner();
+    }
+    
+    
+    public void RestartGame()
+    {
+        StopAllCoroutines();
+        waveText.text = "1";
+        currentWave = 1;
+        timer.Reset();
+        timeBetweenWaves = initialTimeBetweenWaves;
+        
+        maxSpawnableKrabs = 1;
+        maxSpawnableBubbles = 1;
+        
+        PlayerStats.ResetHearts();
+        enemySpawner.ResetSpawner();
+        bigBubbleSpawner.ResetSpawner();
         
         StartCoroutine(WaveRoutine());
     }
