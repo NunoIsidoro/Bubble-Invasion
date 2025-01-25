@@ -11,7 +11,7 @@ public class WaveManager : MonoBehaviour
     private int currentWave = 1;
     private float timeBetweenWaves; // Tempo atual entre waves
 
-    private void Start()
+    private void OnEnable()
     {
         timeBetweenWaves = initialTimeBetweenWaves;
         StartCoroutine(WaveRoutine());
