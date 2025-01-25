@@ -109,6 +109,8 @@ public class PlayerAttack : MonoBehaviour
             // If the object is a bubble, destroy it after a delay
             if (obj.CompareTag("Bubble")) // Ensure your bubbles have a "Bubble" tag
             {
+                // change tag to PlayerBubble
+                obj.tag = "PlayerBubble";
                 StartCoroutine(DestroyBubbleAfterDelay(obj.gameObject, 3f)); // Destroy after 3 seconds
             }
         }

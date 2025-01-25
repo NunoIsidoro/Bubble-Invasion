@@ -98,6 +98,7 @@ GameObject:
   - component: {fileID: 5046453460833163889}
   - component: {fileID: 1498177375144568979}
   - component: {fileID: 3952221499930647291}
+  - component: {fileID: 3059175810473143542}
   m_Layer: 0
   m_Name: EnemyPrefab
   m_TagString: Untagged
@@ -188,6 +189,44 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d7d601898f9491d4cb8c21376a1cebfe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  BubbleParent: {fileID: 0}
   GameArea: {fileID: 0}
   simpleBubble: {fileID: 8420507427059057015, guid: 11aa1f5b4841f3b42840db8c9a9ea75f, type: 3}
   spawnBubbleDelay: 0
+--- !u!70 &3059175810473143542
+CapsuleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3339927535105914960}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: 0, y: 0}
+  m_Size: {x: 1, y: 2}
+  m_Direction: 0

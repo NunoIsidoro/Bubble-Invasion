@@ -1,4 +1,5 @@
 using System.Collections;
+using Project.Runtime.Scripts.Core;
 using UnityEngine;
 
 public enum EnemyDifficulty
@@ -194,5 +195,17 @@ public class Enemy : MonoBehaviour
         while (!GameArea.OverlapPoint(randomPosition)); // Verifica se a posição está dentro do Collider2D
 
         return randomPosition;
+    }
+    
+    
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.CompareTag("PlayerBubble"))
+        {
+            StartCoroutine(MoveOutAndDestroy());
+            Destroy(collision.gameObject);
+            PlayerPrefsManager.EnemiesKilled++;
+            Debug.Log("Hit by a player bubble!");
+        }
     }
 }

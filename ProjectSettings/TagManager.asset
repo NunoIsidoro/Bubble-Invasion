@@ -8,6 +8,7 @@ TagManager:
   - Bubble
   - PowerUpLife
   - krab
+  - PlayerBubble
   layers:
   - Default
   - TransparentFX
