@@ -17,7 +17,7 @@ public class EnemySpawner : MonoBehaviour
     private int enemiesSpawned;
     private Coroutine spawnCoroutine;
     
-    private List<Enemy> enemies = new List<Enemy>();
+    public List<Enemy> enemies = new List<Enemy>();
 
 
     public void StartSpawning(int numberOfEnemies)

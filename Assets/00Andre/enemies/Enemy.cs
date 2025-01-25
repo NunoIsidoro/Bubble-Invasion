@@ -169,6 +169,10 @@ public class Enemy : MonoBehaviour
             elapsedTime += Time.deltaTime;
             yield return null;
         }
+        
+        // get enemy spawner
+        var enemySpawner = FindObjectOfType<EnemySpawner>();
+        enemySpawner.enemies.Remove(this);
 
         Destroy(gameObject);
     }

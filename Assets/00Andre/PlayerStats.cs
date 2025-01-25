@@ -13,6 +13,7 @@ public class PlayerStats : MonoBehaviour
     public GameObject heartPrefab;
     public List<GameObject> hearts;
     public Timer timer;
+    public PlayerAttack playerAttack;
     
     public bool isDefeatPopupActive = false;
 
@@ -24,6 +25,8 @@ public class PlayerStats : MonoBehaviour
         {
             hearts.Add(child.gameObject);
         }
+        
+        playerAttack = GetComponent<PlayerAttack>();
     }
 
     // take damage, remove a heart
@@ -132,7 +135,13 @@ public class PlayerStats : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (recentlyTriggered) return; // Ignora se já foi disparado recentemente
+        if (recentlyTriggered) return;
+        
+        if (collision.IsTouching(playerAttack.weaponSpawnPoint.GetComponent<Collider2D>()))
+        {
+            // Se o player estiver atacando, não tome dano
+            return;
+        }
 
         if (collision.CompareTag("Bubble"))
         {

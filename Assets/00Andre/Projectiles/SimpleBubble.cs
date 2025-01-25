@@ -16,7 +16,7 @@ public class SimpleBubble : MonoBehaviour
             return;
         }
 
-        float randomSize = Mathf.Lerp(0.75f, 2f, launchDelay / 3f);
+        float randomSize = Mathf.Lerp(0.25f, 1.25f, launchDelay / 3f);
         transform.localScale = new Vector3(randomSize, randomSize, 1f);
         
         // float randomAngle = Random.Range(-45f, 45f);

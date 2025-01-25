@@ -6,24 +6,33 @@ public class PlayerAttack : MonoBehaviour
 {
     public GameObject meleeWeaponPrefab; // Prefab for the melee weapon hitbox or effect
     public Transform weaponSpawnPoint;  // Point from where the melee attack will originate
-    public float attackRange = 1.5f;    // Range of the melee attack
-    public float attackDuration = 0.2f; // How long the attack lasts
+    public float attackRange;    // Range of the melee attack
+    public float attackDuration; // How long the attack lasts
     public float attackCooldown = 1.0f; // Time between attacks
     public float knockbackForce = 10f;  // Force applied to bubbles when hit
     public LayerMask enemyLayers;       // Layers that are considered "enemies" (including bubbles)
 
     private float attackTimer;          // Timer to track the cooldown
-    private bool isAttacking;           // Flag to indicate if an attack is ongoing
+    public bool isAttacking;           // Flag to indicate if an attack is ongoing
     private float attackVisualTimer;    // Timer to track how long the visual stays
     public float attackRadius = 1f; // Radius of the attack area
 
     public Animator animator;
+
+    public Collider2D attackCollider; // Collider for the attack hitbox
 
     void Start()
     {
         attackTimer = 0f;
         isAttacking = false;
 
+        // Create or find the attack collider (e.g., a child collider in the meleeWeaponPrefab)
+        attackCollider = meleeWeaponPrefab.GetComponent<Collider2D>();
+        if (attackCollider != null)
+        {
+            // Initially disable the collider so it doesn't interfere when not attacking
+            attackCollider.enabled = false;
+        }
     }
 
     void Update()
@@ -38,6 +47,11 @@ public class PlayerAttack : MonoBehaviour
             if (attackVisualTimer <= 0f)
             {
                 isAttacking = false; // Turn off attack visualization
+                // Disable the collider once the attack is over
+                if (attackCollider != null)
+                {
+                    attackCollider.enabled = false;
+                }
             }
         }
 
@@ -60,40 +74,32 @@ public class PlayerAttack : MonoBehaviour
         // Trigger the attack animation
         animator.SetTrigger("Attack");
 
-        // Get the mouse position in world space
-        Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        mousePosition.z = 0; // Ensure the Z-coordinate is zero for 2D gameplay
-
-        // Calculate the direction and distance to the mouse position
-        Vector3 attackDirection = (mousePosition - weaponSpawnPoint.position).normalized;
-        float distanceToMouse = Vector3.Distance(weaponSpawnPoint.position, mousePosition);
-
-        // Clamp the distance to the maximum attack range
-        Vector3 clampedPosition = weaponSpawnPoint.position + attackDirection * Mathf.Min(distanceToMouse, attackRange);
-
-        // Detect enemies within the customizable attack radius
-        Collider2D[] hitObjects = Physics2D.OverlapCircleAll(clampedPosition, attackRadius, enemyLayers);
-        Debug.Log($"Detected {hitObjects.Length} objects in range.");
-
-        // Spawn the attack circle for visualization
-        GameObject weapon = Instantiate(meleeWeaponPrefab, clampedPosition, Quaternion.identity);
-        Destroy(weapon, attackDuration);
-
-        // Apply effects to all detected objects
-        foreach (Collider2D obj in hitObjects)
+        // Enable the collider to start detecting hits
+        if (attackCollider != null)
         {
-            Debug.Log($"Hit object: {obj.name}");
+            attackCollider.enabled = true;
+        }
+
+        // You could also instantiate the meleeWeaponPrefab here to represent the weapon visually
+        // Instantiate(meleeWeaponPrefab, weaponSpawnPoint.position, Quaternion.identity);
+    }
+
+    // This function will be called whenever a collider enters the attack area
+    void OnTriggerEnter2D(Collider2D other)
+    {
+        if (!isAttacking) return;
+        
+        // Check if the object is in the enemy layer
+        if ((enemyLayers.value & (1 << other.gameObject.layer)) != 0)
+        {
+            Debug.Log($"Hit object: {other.name}");
 
             // Apply knockback force to the object if it has a Rigidbody2D
-            Rigidbody2D rb = obj.GetComponent<Rigidbody2D>();
+            Rigidbody2D rb = other.GetComponent<Rigidbody2D>();
             if (rb != null)
             {
-                // Calculate direction from the bubble to the mouse position
-                Vector3 mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-                mouseWorldPos.z = 0; // Ensure we're working in 2D
-
-                // Calculate direction to mouse
-                Vector2 forceDirection = (mouseWorldPos - obj.transform.position).normalized;
+                // Calculate direction from the object to the spawn point
+                Vector2 forceDirection = (other.transform.position - weaponSpawnPoint.position).normalized;
 
                 // Optionally, you can add more upward force as needed
                 forceDirection = new Vector2(forceDirection.x, Mathf.Abs(forceDirection.y)); // Ensure upward knockback
@@ -101,27 +107,26 @@ public class PlayerAttack : MonoBehaviour
                 rb.linearVelocity = Vector2.zero; // Reset velocity to ensure consistent knockback
                 rb.AddForce(forceDirection * knockbackForce, ForceMode2D.Impulse);
 
-                Debug.Log($"Knockback applied to {obj.name}");
+                Debug.Log($"Knockback applied to {other.name}");
             }
 
             // If the object is a bubble, destroy it after a delay
-            if (obj.CompareTag("Bubble")) // Ensure your bubbles have a "Bubble" tag
+            if (other.CompareTag("Bubble")) // Ensure your bubbles have a "Bubble" tag
             {
-                // change tag to PlayerBubble
-                obj.tag = "PlayerBubble";
-                StartCoroutine(DestroyBubbleAfterDelay(obj.gameObject, 3f)); // Destroy after 3 seconds
+                // Change tag to PlayerBubble
+                other.tag = "PlayerBubble";
+                StartCoroutine(DestroyBubbleAfterDelay(other.gameObject, 3f)); // Destroy after 3 seconds
             }
         }
     }
-
 
     // Coroutine to destroy the bubble after a delay
     IEnumerator DestroyBubbleAfterDelay(GameObject bubble, float delay)
     {
         yield return new WaitForSeconds(delay); // Wait for the specified delay time
-        Debug.Log($"Destroying {bubble.name} after {delay} seconds.");
         try
         {
+            Debug.Log($"Destroying {bubble.name} after {delay} seconds.");
             Destroy(bubble); // Destroy the bubble
         }
         catch (Exception)
@@ -129,30 +134,16 @@ public class PlayerAttack : MonoBehaviour
         }
     }
 
-
     void OnDrawGizmos()
     {
         if (weaponSpawnPoint == null)
             return;
 
-        // Draw the maximum attack range
-        Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(weaponSpawnPoint.position, attackRange);
-
-        // Draw the attack radius if attacking
-        if (isAttacking)
+        // Draw the attack range as a red circle
+        if (isAttacking) 
         {
-            Gizmos.color = Color.yellow;
-            Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            mousePosition.z = 0;
-
-            Vector3 attackDirection = (mousePosition - weaponSpawnPoint.position).normalized;
-            float distanceToMouse = Vector3.Distance(weaponSpawnPoint.position, mousePosition);
-            Vector3 clampedPosition = weaponSpawnPoint.position + attackDirection * Mathf.Min(distanceToMouse, attackRange);
-
-            Gizmos.DrawWireSphere(clampedPosition, attackRadius);
+            Gizmos.color = Color.red;
+            Gizmos.DrawWireSphere(weaponSpawnPoint.position, attackRange); // Visualize attack range (somente aqui)
         }
     }
-
-
 }
