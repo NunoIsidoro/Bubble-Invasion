@@ -8,13 +8,15 @@ public class PlayerMovement : MonoBehaviour
     private float Move;
 
     public Rigidbody2D rb;
+    public Animator animator;
 
     public bool isJumping;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-
+        // Get the Animator component from the player
+        animator = GetComponent<Animator>();
     }
 
     // Update is called once per frame
@@ -25,10 +27,16 @@ public class PlayerMovement : MonoBehaviour
         rb.linearVelocity = new Vector2(speed * Move, rb.linearVelocity.y);
 
 
-        // Jump logic
-        if (Input.GetButtonDown("Jump") && isJumping == false)
+        // Update animator parameter to indicate running status
+        animator.SetBool("IsRunning", Mathf.Abs(Move) > 0.1f);
+
+        // Jumping
+        if (Input.GetButtonDown("Jump") && !isJumping)
         {
-            rb.AddForce(new Vector2(rb.linearVelocity.x, jump));
+            rb.AddForce(Vector2.up * jump, ForceMode2D.Impulse);
+            isJumping = true;
+            // Set the IsJumping parameter (if you have one for jump animation)
+            animator.SetBool("IsJumping", true);
         }
 
         FlipX(Move);
