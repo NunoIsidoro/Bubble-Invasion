@@ -1,10 +1,13 @@
 using System;
+using MoreMountains.Feedbacks;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
 public class SimpleBubble : MonoBehaviour
 {
     private Rigidbody2D rb;
+    public MMF_Player bubbleContactFeedback;
+    public MMF_Player bubbleHitFeedback;
 
     public void Initialize(float launchDelay)
     {
@@ -32,5 +35,16 @@ public class SimpleBubble : MonoBehaviour
     {
         if (transform.position.y < -20f)
             Destroy(gameObject);
+    }
+    
+    
+    public void DoOnContact()
+    {
+        bubbleContactFeedback.PlayFeedbacks();
+    }
+    
+    public void DoOnHit()
+    {
+        bubbleHitFeedback.PlayFeedbacks();
     }
 }
