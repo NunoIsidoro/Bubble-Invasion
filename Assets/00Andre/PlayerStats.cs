@@ -162,6 +162,22 @@ public class PlayerStats : MonoBehaviour
             Destroy(collision.gameObject);
             Debug.Log("Hit by a bubble!");
             Invoke(nameof(ResetTrigger), cooldownTime); // Reseta o controle após o cooldown
+            
+            try
+            {
+                collision.gameObject.GetComponent<SimpleBubble>().DoOnHit();
+            }
+            catch (Exception)
+            {
+            }
+            
+            try
+            {
+                collision.gameObject.GetComponent<CircularMovement>().DoOnHit();
+            }
+            catch (Exception)
+            {
+            }
         }
         else if (collision.CompareTag("PowerUpLife"))
         {
@@ -169,6 +185,14 @@ public class PlayerStats : MonoBehaviour
             AddHeart();
             Destroy(collision.gameObject);
             Invoke(nameof(ResetTrigger), cooldownTime); // Reseta o controle após o cooldown
+            
+            try
+            {
+                collision.gameObject.GetComponent<SimpleBubble>().DoOnContact();
+            }
+            catch (Exception)
+            {
+            }
         }
         else if (collision.CompareTag("krab"))
         {

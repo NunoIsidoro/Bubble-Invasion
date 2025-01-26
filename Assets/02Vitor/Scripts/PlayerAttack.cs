@@ -121,6 +121,14 @@ public class PlayerAttack : MonoBehaviour
                 other.tag = "PlayerBubble";
                 StartCoroutine(DestroyBubbleAfterDelay(other.gameObject, 3f)); // Destroy after 3 seconds
             }
+
+            try
+            {
+                other.gameObject.GetComponent<SimpleBubble>().DoOnContact();
+            }
+            catch (Exception)
+            {
+            }
         }
     }
 

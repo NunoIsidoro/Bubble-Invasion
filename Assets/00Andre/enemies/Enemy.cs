@@ -1,7 +1,9 @@
+using System;
 using System.Collections;
 using MoreMountains.Feedbacks;
 using Project.Runtime.Scripts.Core;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public enum EnemyDifficulty
 {
@@ -205,6 +207,14 @@ public class Enemy : MonoBehaviour
             Destroy(collision.gameObject);
             PlayerPrefsManager.EnemiesKilled++;
             Debug.Log("Hit by a player bubble!");
+            
+            try
+            {
+                collision.gameObject.GetComponent<SimpleBubble>().DoOnHit();
+            }
+            catch (Exception)
+            {
+            }
         }
     }
     

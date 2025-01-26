@@ -1,3 +1,4 @@
+using MoreMountains.Feedbacks;
 using UnityEngine;
 
 public class CircularMovement : MonoBehaviour
@@ -19,6 +20,16 @@ public class CircularMovement : MonoBehaviour
     private float creationTime; // Armazena o tempo desde a criação do objeto
     private int movementDirection; // 1 para iniciar à direita, -1 para iniciar à esquerda
 
+    
+    public MMF_Player bubbleHitFeedback;
+    
+    
+    public void DoOnHit()
+    {
+        bubbleHitFeedback.PlayFeedbacks();
+    }
+    
+    
     void Start()
     {
         amplitude = Random.Range(2f, 5f); // Amplitude aleatória
