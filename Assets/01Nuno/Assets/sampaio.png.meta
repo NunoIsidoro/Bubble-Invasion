@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 66adbfca9148a0743b114ff1edb01d09
+guid: fd5ec096432a7a54bb10db67f46fd440
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 260111183961883183
-    second: funny-frog-pictures-behuw2hjlvdwnzj7_0
+      213: 3285140723594804472
+    second: sampaio_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -113,13 +113,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: funny-frog-pictures-behuw2hjlvdwnzj7_0
+      name: sampaio_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 828
-        height: 1026
+        width: 201
+        height: 201
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -128,8 +128,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: f2287226eb91c9300800000000000000
-      internalID: 260111183961883183
+      spriteID: 8fcb90b251a279d20800000000000000
+      internalID: 3285140723594804472
       vertices: []
       indices: 
       edges: []
@@ -147,8 +147,7 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable:
-      funny-frog-pictures-behuw2hjlvdwnzj7_0: 260111183961883183
+    nameFileIdTable: {}
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
